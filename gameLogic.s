@@ -20,12 +20,12 @@ gameLogic:
 	mov r10, #1			//Default game state to false
 	
 	bl	initMap			//Branch to initMap to initialize the map
-	add	r1,	#30	//Do i need "!" beside r1, (i think soo...?? its at the veryyyy beginning so somewhere at the very top right after initMap is done initializing)
+	add	r1,	#30, lsl #2	//Do i need "!" beside r1, (i think soo...?? its at the veryyyy beginning so somewhere at the very top right after initMap is done initializing)
 	ldr	r7,	[r1]	//Player position at initialization (should move this value into a r3 as an arguement)
 
 looping:
 
-	bl snes whatevers
+	bl snes whatevers	//Better change this :3
 
 //Try to mush together right, left, up, and down using scratch registers to optimize it
 //Im going to need to get the output from the SNES controller in r0 since im going to be using that to compare
@@ -73,8 +73,8 @@ pressButtonA:
 	ldr	r3,	=pressedA	//Load address of pressedA
 	ldr	r5,	[r3]		//Get binary value for pressing the "A" button
 	cmp	r0,	r5		//Compare binary value of pressing the "A" button to inout from controller
-	bne	error			//Branch to error if value does not equal
-	bl	somewhere//fix later	
+	bne	looping			//If no other button is pressed other than the ones above. Branch back to looping to wait for another input from controller
+	bl	pressedA
 	b	looping
 
 
@@ -95,10 +95,10 @@ pressButtonA:
 	//r0 should binary value for a pressed button
 	//r7 == 3 (player value)
 	
-rightAction:
+right:
 	push	{r7, lr}
 	
-	ldr	r4,	[r1, #16]	//Load the address of the tile to the right of the player
+	ldr	r4,	[r1, #16, lsl #2]	//Load the address of the tile to the right of the player
 	cmp	r4,	#0		//Compare value of r4 to 0 (floor)
 	beq	validMoveRight		//Branch if r4 == 0
 	
@@ -117,7 +117,7 @@ rightAction:
 left:
 	push	{r7, lr}
 					
-	ldrb	r4,	[r1, #-16]	//Load the address of the tile to the left of the player
+	ldrb	r4,	[r1, #-16, lsl #2]	//Load the address of the tile to the left of the player
 	cmp	r4,	#0		//Compare value of r4 to 0 (floor)
 	beq	validMoveLeft		//Branch if r4 == 0
 	
@@ -136,7 +136,7 @@ left:
 up:	
 	push	{r7, lr}
 	
-	ldr	r4,	[r1, #-1]	//Load the address of the tile above the player
+	ldr	r4,	[r1, #-1, lsl #2]	//Load the address of the tile above the player
 	cmp	r4,	#0		//Compare value of r4 to 0 (floor)
 	beq	validMoveUp		//Branch if r4 == 0
 	
@@ -155,7 +155,7 @@ up:
 down:
 	push	{r7, lr}
 	
-	ldr	r4,	[r1, #1]	//Load the address of the tile below the player
+	ldr	r4,	[r1, #1, lsl #2]	//Load the address of the tile below the player
 	cmp	r4,	#0		//Compare value of r4 to 0 (floor)
 	beq	validMoveDown		//Branch if r4 == 0
 	
@@ -174,32 +174,29 @@ down:
 	pop	[r7, lr}
 	bx	lr			//Branch back to the calling code
 
---------
-invalidMove:
-	str	r7,	[r1]!		//Keep the player at its current position
-	pop	{r7, lr}
-	bx	lr
+//--------
 	
+//May need to change the offset to a different number depending on where it moves
 validMoveRight:
-	str	r7,	[r1, #16]!	//Place player to the right
+	str	r7,	[r1, #16, lsl #2]!	//Place player to the right
 	bl	decMove			//Branch to decMoves to decrement remaining moves left
 	pop	{r7, lr}
 	bx	lr			
 	
 validMoveLeft: 
-	str	r7,	[r1, #-16]!	//Place player to the left
+	str	r7,	[r1, #-16, lsl #2]!	//Place player to the left
 	bl	decMove			//Branch to decMoves to decrement remaining moves left
 	pop	{r7, lr}
 	bx	lr
 	
 validMoveUp:
-	str	r7,	[r1, #-1]!	//Place player above its previous position
+	str	r7,	[r1, #-1, lsl #2]!	//Place player above its previous position
 	bl	decMove			//Branch to decMoves to decrement remaining moves left
 	pop	{r7, lr}
 	bx	lr
 	
 validMoveDown:
-	str	r7,	[r1, #1]!	//Place player below its previous position
+	str	r7,	[r1, #1, lsl #2]!	//Place player below its previous position
 	bl	decMove			//Branch to decMoves to decrement remaining moves left
 	pop	{r7, lr}
 	bx	lr
@@ -209,9 +206,10 @@ takeKeyLeft:
 	ldr	r6,	[r2]		//Get value of numKeys
 	add	r6,	#1		//Increment number of total keys
 	str	r6,	[r2]		//Store result back into numKeys address
-	str	r7,	[r1, #-16]!	//Place player where the key was on the left (how would i set this to 0 after the player moves out and tries to move back in)
+	str	r7,	[r1, #-16, lsl #2]!	//Place player where the key was on the left (how would i set this to 0 after the player moves out and tries to move back in)
 	bl	decMove			//Branch to decMove to decrement remaining moves left
-
+	bl	fillSpace		//Branch to fillSpace when player moves
+	
 	pop	{r7, lr}//???
 	bx	lr
 	
@@ -220,8 +218,9 @@ takeKeyUp:
 	ldr	r6,	[r2]		//Get value of numKeys
 	add	r6,	#1		//Increment number of total keys
 	str	r6,	[r2]		//Store result back into numKeys address
-	str	r7,	[r1, #-1]	//Place player where the key was above (how to set it to 0 after moving away from it and blah)
+	str	r7,	[r1, #-1, lsl #2]	//Place player where the key was above (how to set it to 0 after moving away from it and blah)
 	bl	decMove			//Branch to decMove to decrement remaining moves left
+	bl	fillSpaceUp		//Branch to fillSpaceDown 
 	
 	pop	{r7, lr}
 	bx	lr
@@ -233,30 +232,57 @@ decMove:
 	sub	r9,	#1		//Subtract remaining moves by 1
 	str	r9,	[r8]		//Storing result back into actionMoves
 	
+	pop	{r7, lr}
+	bx	lr
+	
+fillSpaceDown:
+	mov	r9,	#0
+	//check which direction the player was when it moved
+	//ldr	r9,	[r1, #-1, lsl #2]//Get character for player at this location. not sure if this idea works as a general thing
+	str	r9,	[r1, #1, lsl #2]//Fill space where player was when it moved up (fill down space)
+	
+
+//********************************
+
+//********************************
+//This is for not invalid movement. You wont move if you press random buttons or tried some silly stuff 
+invalidMove:
+	push	{r7, lr}
+	str	r7,	[r1]!		//Keep the player at its current position
+	pop	{r7, lr}
 	bx	lr
 //********************************
 
 //********************************
-//This is strictly for pressing a button
+//This is strictly for pressing a button to open a door
 //*Need to return the map address and move it to r1 (calculating the offset has been done already)*
 
-validPressedButton:
-	push	{r7, lr}
-	
-openDoorRight:
+
+pressedA:
+	push	{r7, lr}		//SHOULD I HAVE THIS HERE FOR EVERY LABEL IN THIS PART?
 	ldr	r2,	=numKeys	//Load address of numKeys
 	ldr	r6,	[r2]		//Get current values of key
-	
-	cmp	r6,	#0		//Compare r6 to 0
-	beq	noKeys			//Branch to noKeys if r6 == 0
-	
+
+doorOnSides:	
 	//from current player position, get the right tile
 	//r1 should have the address of the map from the initMap
-	ldr	r8,	[r1, #16]	//Geting the value of right tile from the player (dont change the address)
-	
+	ldr	r8,	[r1, #16, lsl #2]//Getting the value of right tile from the player (dont change the address)
 	cmp	r8,	#5		//Comparing r8 to 5
+	beq	openDoor		//Branch to openDoor when r8 == 5
 	
-	 
+	ldr	r8,	[r1, #-16, lsl #2]//Getting the value of the left tile from the player	
+	
+	sub	r6, 	#1		//Decrement total number of keys by 1
+	strb	r6,	[r2]		//Store decremented result back into numKeys
+	
+	pop	{r7, lr}
+	bx	lr			//Branch back to calling code
+	
+	//Need to be sure that i change the tile where the key was to a 0 to make it a floor tile after the player moves off of it...
+	
+openDoor:
+	cmp	r6,	#0		//Compare r6 to 0
+	beq	noKeys			//Branch to noKeys if r6 == 0
 
 //********************************
 
