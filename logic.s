@@ -15,21 +15,21 @@ logic:
 	
 	//bl	initMap
 	
-	
+	ldr	r1,	=mapArray	//Load mapArray address
+	add	r1,	#30
+	lsl	r1,	#2
 looping:
 	bl	initSnesController	//Fix the name later	
 	//Will be getting input value from r0
 	
 	
 	mov	r3,	r0		//Move input value into r3
-	ldr	r1,	=mapArray	//Load mapArray address
-	add	r1,	#30
-	lsl	r1,	#2
+	
 
 checkRight:
 	ldr	r6,	=moveRight
 	ldr	r5,	[r6]
-	cmp	r3,	r0
+	cmp	r3,	r5
 	bne	checkLeft
 	
 	bl	right
