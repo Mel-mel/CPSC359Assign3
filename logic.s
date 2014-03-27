@@ -1,7 +1,7 @@
 .section .init
-.globl	begin
+.globl	go
 
-begin:
+go:
 	b	logic
 	
 .section .text
