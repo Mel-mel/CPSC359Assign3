@@ -36,7 +36,10 @@ attempt:
 	b		attempt
 
 
-
+startMenu:
+	bl	drawMenu
+	
+	
 haltLoop$:
 	b	haltLoop$
 
