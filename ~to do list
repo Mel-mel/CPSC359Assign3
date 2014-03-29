@@ -23,12 +23,13 @@ GAME OVER
 			- functionality of pressing A ==> go back to main menu
 			
 PAUSE SCREEN
-	- "Restart game"
-		--> press "A" to select
-			--> restart the game, counters reset, doors back in place, keys back in place
 	- "Quit back to main menu"
 		--> press "A" to select
 			--> quit back to the main title screen
 	fix pause screen
 --> possibility of toggling (on/off) for screens
 	(game over/pause/main/win/lose)
+
+
+GENERAL:
+- make some sort of delay for buttons such that if you press and hold a button, it will not keep on working.
