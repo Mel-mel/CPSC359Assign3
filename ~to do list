@@ -1,0 +1,34 @@
+~~~~LEFT TO DO~~~~
+
+MAIN TITLE SCREEN
+		- 	"Maze Game ~ Richard, Emily, Melissa"
+		- Option "New Game"
+			--> press "A" to select
+					--> run game
+		- Option "Quit Game"
+			--> press "A" to select
+					--> Blank/Black screen
+					
+IN GAME
+		- "Actions remaining: ---" 
+			- with every move the action remaining counter (actionsRemain) decreases by 1
+		- "# of Keys: --"
+			- with every collected key the keyCounter increases by 1
+	
+GAME OVER
+	- if actionsRemain == 0, game over screen
+	- game over screen
+			- 	"You have run out of moves, game over."
+				"Press A to go back to the title screen"
+			- functionality of pressing A ==> go back to main menu
+			
+PAUSE SCREEN
+	- "Restart game"
+		--> press "A" to select
+			--> restart the game, counters reset, doors back in place, keys back in place
+	- "Quit back to main menu"
+		--> press "A" to select
+			--> quit back to the main title screen
+	fix pause screen
+--> possibility of toggling (on/off) for screens
+	(game over/pause/main/win/lose)
