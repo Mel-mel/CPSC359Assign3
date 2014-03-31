@@ -1,0 +1,18 @@
+~~~~LEFT TO DO~~~~
+
+IN GAME
+- "Actions remaining: ---"
+- with every move the action remaining counter (actionsRemain) decreases by 1
+- "win game"
+- when player reaches the exit, go to the win game screen
+
+GAME OVER
+- if actionsRemain == 0, game over screen
+- game over screen
+- "You have run out of moves, game over."
+"Press A to go back to the title screen"
+- functionality of pressing A ==> go back to main menu
+
+
+GENERAL:
+- make some sort of delay for buttons such that if you press and hold a button, it will not keep on working.
