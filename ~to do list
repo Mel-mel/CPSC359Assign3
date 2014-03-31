@@ -1,15 +1,17 @@
 ~~~~LEFT TO DO~~~~
 					
 IN GAME
-		- "Actions remaining: ---" 
-			- with every move the action remaining counter (actionsRemain) decreases by 1
+	- "Actions remaining: ---" 
+		- with every move the action remaining counter (actionsRemain) decreases by 1
+	- "win game"
+		- when player reaches the exit, go to the win game screen
 	
 GAME OVER
 	- if actionsRemain == 0, game over screen
 	- game over screen
-			- 	"You have run out of moves, game over."
+		- 	"You have run out of moves, game over."
 				"Press A to go back to the title screen"
-			- functionality of pressing A ==> go back to main menu
+		- functionality of pressing A ==> go back to main menu
 
 
 GENERAL:
